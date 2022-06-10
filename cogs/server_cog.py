@@ -24,15 +24,6 @@ class Server(commands.Cog):             # this cog runs all things that need to 
         else:
             return discord.utils.get(ctx.guild.voice_channels, name=vcName)   # handles exact names of channels for all other servers
 
-
-
-#    @commands.Cog.listener()            # Event on_ready tells how long it takes for the bot to be able to start as well as know when it's ready
-#    async  def on_ready(self, ctx):
-#        print('Bot is ready')
-
-#    @commands.command()
-#    async def bot.add_cog(Server(bot))     # adds the cog to the bot
-
 def setup(bot):
     bot.add_cog(Server(bot))
 
