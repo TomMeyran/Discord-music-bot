@@ -96,7 +96,7 @@ class Music(commands.Cog):
                 print(queue)
 
 # method that plays a playlist (with a queue)
-    async def queuePlayer(self, ctx, queue, list, vcName):  # how can I put ctx first?
+    async def queuePlayer(self, ctx, queue, vcName):  # how can I put ctx first?
         voiceChannel = discord.utils.get(ctx.guild.voice_channels, name=str(vcName))
         if not ctx.voice_client.is_connected():  # check if the bot is connected to vc
             await voiceChannel.connect()
@@ -105,7 +105,7 @@ class Music(commands.Cog):
         else:
             songPlaying = AudioSegment.from_file(self.musicFolder + queue[0] + '.mp3', format="mp3")
             ctx.voice_client.play(discord.FFmpegPCMAudio(self.musicFolder + queue[0] + '.mp3'),
-                       after=lambda e: self.coro(ctx, queue, list, vcName))  # result calls the coro
+                       after=lambda e: self.coro(ctx, queue, vcName))  # result calls the coro
             await ctx.send('Playing ' + queue[0] + ' ' + self.song_details(songPlaying))
 
     def song_details(self, songPlaying):
@@ -119,13 +119,13 @@ class Music(commands.Cog):
         return songLength
 
 # facilitates the queue in the function voice_client.play()
-    def coro(self, ctx, queue, list, vcName):  # this function is placed in after because it both runs queuePlayer() and awaits it all in one line
+    def coro(self, ctx, queue, vcName):  # this function is placed in after because it both runs queuePlayer() and awaits it all in one line
         if not queue == []:  # queue could be cleared by the stop command, if that happens the pop will cause an error
             queue.pop(0)  # remove the song that just played from the queue
         if queue == []:  # after the last song has played queue will be empty
             print('Queue ended')
         else:
-            coro = asyncio.run_coroutine_threadsafe(self.queuePlayer(ctx, queue, list, vcName), self.bot.loop)
+            coro = asyncio.run_coroutine_threadsafe(self.queuePlayer(ctx, queue, vcName), self.bot.loop)
             print('queue in coro: ' + str(queue))
             coro.result()
 
@@ -143,7 +143,7 @@ class Music(commands.Cog):
         vcName = ctx.voice_client.channel
         print('queue in play_', List, ': ' + str(self.queue))
         queue_list = List.copy()
-        await self.queuePlayer(ctx, self.build_queue(queue_list), queue_list, vcName)  # call queuePlayer()
+        await self.queuePlayer(ctx, self.build_queue(queue_list), vcName)  # call queuePlayer()
 
 # commands for playlists
 
